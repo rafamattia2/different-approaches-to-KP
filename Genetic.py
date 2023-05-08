@@ -1,24 +1,12 @@
 import random
 import csv
 
-# def generate_population(size, file_name):
-#     items = []
-#     with open(file_name, newline='') as file:
-#         reader = csv.reader(file, delimiter=',')
-#         for row in reader:
-#             weight = int(row[0])
-#             value = int(row[1])
-#             items.append([weight, value])
-#
-#         population = []
-#         for _ in range (size):
-#             genes = [0, 1]
-#             chromosome = []
-#             for _ in range(len(items)):
-#                 chromosome.append(random.choice(genes))
-#             population.append(chromosome)
-#         print("Generated a random population of size", size)
-#         return population
+file_name = "output100.txt"
+max_weight = 100
+population_size = 100
+mutation_probability = 0.2
+generations = 140
+
 def generate_population(size):
     population = []
     for _ in range (size):
@@ -42,30 +30,32 @@ def calculate_fitness(chromosome):
     else:
         return total_value
 
-def select_chromosomes(population):
-    fitness_values = []
-    for chromosome in population:
-        fitness_values.append(calculate_fitness(chromosome))
-
-    fitness_values = [float(i)/sum(fitness_values) for i in fitness_values]
-    parent1 = random.choices(population, weights=fitness_values, k=1)[0]
-    parent2 = random.choices(population, weights=fitness_values, k=1)[0]
-
-    #print("Selected two chromosomes for crossover")
-    return parent1, parent2
-
 # def select_chromosomes(population):
 #     fitness_values = []
 #     for chromosome in population:
 #         fitness_values.append(calculate_fitness(chromosome))
 #
-#     total_fitness = sum(fitness_values)
-#     if total_fitness == 0:
-#         return random.choices(population, k=2)
-#
-#     fitness_values = [float(i)/total_fitness for i in fitness_values]
+#     fitness_values = [float(i)/sum(fitness_values) for i in fitness_values]
 #     parent1 = random.choices(population, weights=fitness_values, k=1)[0]
 #     parent2 = random.choices(population, weights=fitness_values, k=1)[0]
+#
+#     #print("Selected two chromosomes for crossover")
+#     return parent1, parent2
+#
+def select_chromosomes(population):
+    fitness_values = []
+    for chromosome in population:
+        fitness_values.append(calculate_fitness(chromosome))
+
+    total_fitness = sum(fitness_values)
+    if total_fitness == 0:
+        return random.choices(population, k=2)
+    if total_fitness > max_weight:
+        return random.choices(population, k=2)
+    fitness_values = [float(i)/total_fitness for i in fitness_values]
+    parent1 = random.choices(population, weights=fitness_values, k=1)[0]
+    parent2 = random.choices(population, weights=fitness_values, k=1)[0]
+    return parent1, parent2
 def crossover(parent1, parent2):
     crossover_point = random.randint(0, len(items)-1)
     child1 = parent1[0:crossover_point] + parent2[crossover_point:]
@@ -92,8 +82,6 @@ def get_best(population):
     max_index = fitness_values.index(max_value)
     return population[max_index]
 
-file_name = "output50.txt"
-
 with open(file_name, newline='') as file:
     reader = csv.reader(file, delimiter=',')
     items = []
@@ -103,11 +91,6 @@ with open(file_name, newline='') as file:
         items.append([weight, value])
 
 print("Avaliable items:\n", items)
-
-max_weight = 100
-population_size = 100
-mutation_probability = 0.2
-generations = 10
 
 print("\nGenetic algorithm parameters")
 print("Max_weight: ", max_weight)
@@ -141,7 +124,7 @@ for i in range(len(best)):
         total_weight += items[i][0]
         total_value += items[i][1]
 
-#print(best)
+print(best)
 print("\nThe best solution: ")
 print("Weight: ", total_weight)
 print("Value: ", total_value)
