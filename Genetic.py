@@ -1,7 +1,7 @@
 import random
 import csv
 
-file_name = "output100.txt"
+file_name = "output20.txt"
 max_weight = 100
 population_size = 100
 mutation_probability = 0.2

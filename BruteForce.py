@@ -16,11 +16,11 @@ def knapSack(W, wt, val, n):
         return max(val[n-1] + knapSack(W-wt[n-1], wt, val, n-1),
                    knapSack(W, wt, val, n-1))
 
-filename = 'output25.txt'
+filename = 'output20.txt'
 data = load_data(filename)
 val = [d[1] for d in data]
 wt = [d[0] for d in data]
-W = 50
+W = 100
 n = len(val)
 
 start_time = time.time()
