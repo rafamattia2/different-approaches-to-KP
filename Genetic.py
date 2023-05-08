@@ -48,12 +48,24 @@ def select_chromosomes(population):
         fitness_values.append(calculate_fitness(chromosome))
 
     fitness_values = [float(i)/sum(fitness_values) for i in fitness_values]
-    parent1 = random.choices(population, weights = fitness_values, k=1)[0]
-    parent2 = random.choices(population, weights = fitness_values, k=1)[0]
+    parent1 = random.choices(population, weights=fitness_values, k=1)[0]
+    parent2 = random.choices(population, weights=fitness_values, k=1)[0]
 
     #print("Selected two chromosomes for crossover")
     return parent1, parent2
 
+# def select_chromosomes(population):
+#     fitness_values = []
+#     for chromosome in population:
+#         fitness_values.append(calculate_fitness(chromosome))
+#
+#     total_fitness = sum(fitness_values)
+#     if total_fitness == 0:
+#         return random.choices(population, k=2)
+#
+#     fitness_values = [float(i)/total_fitness for i in fitness_values]
+#     parent1 = random.choices(population, weights=fitness_values, k=1)[0]
+#     parent2 = random.choices(population, weights=fitness_values, k=1)[0]
 def crossover(parent1, parent2):
     crossover_point = random.randint(0, len(items)-1)
     child1 = parent1[0:crossover_point] + parent2[crossover_point:]
@@ -80,7 +92,7 @@ def get_best(population):
     max_index = fitness_values.index(max_value)
     return population[max_index]
 
-file_name = "output100.txt"
+file_name = "output50.txt"
 
 with open(file_name, newline='') as file:
     reader = csv.reader(file, delimiter=',')
@@ -89,21 +101,13 @@ with open(file_name, newline='') as file:
         weight = int(row[0])
         value = int(row[1])
         items.append([weight, value])
-# items = [
-#             [1, 2],
-#             [2, 4],
-#             [3, 7],
-#             [4, 5],
-#             [5, 7],
-#             [6, 9]
-#         ]
 
 print("Avaliable items:\n", items)
 
-max_weight = 250
-population_size = 1000
+max_weight = 100
+population_size = 100
 mutation_probability = 0.2
-generations = 100
+generations = 10
 
 print("\nGenetic algorithm parameters")
 print("Max_weight: ", max_weight)
@@ -137,7 +141,7 @@ for i in range(len(best)):
         total_weight += items[i][0]
         total_value += items[i][1]
 
-print(best)
+#print(best)
 print("\nThe best solution: ")
 print("Weight: ", total_weight)
 print("Value: ", total_value)
