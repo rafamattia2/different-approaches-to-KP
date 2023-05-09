@@ -45,7 +45,7 @@ def calculate_fitness(chromosome):
 #     parent1 = random.choices(population, weights=fitness_values, k=1)[0]
 #     parent2 = random.choices(population, weights=fitness_values, k=1)[0]
 
-    return parent1, parent2
+    # return parent1, parent2
 # def select_chromosomes(population):
 #     fitness_values = []
 #     for chromosome in population:
