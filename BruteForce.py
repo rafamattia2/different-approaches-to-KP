@@ -1,34 +1,43 @@
+import itertools
 import time
-def load_data(filename):
-    with open(filename, 'r') as f:
-        data = f.readlines()
-    data = [d.strip().split(',') for d in data]
-    data = [(int(d[0]), int(d[1])) for d in data]
-    return data
+import csv
 
-def knapSack(W, wt, val, n):
-    if n == 0 or W == 0:
-        return 0
-    if (wt[n-1] > W):
-        return knapSack(W, wt, val, n-1)
-    else:
-        return max(val[n-1] + knapSack(W-wt[n-1], wt, val, n-1),
-                   knapSack(W, wt, val, n-1))
+nome_arq = "input20.txt"
 
-totalRes = 0
-for i in range(5):
-    filename= 'input35.txt'
-    W = 70
-    data = load_data(filename)
-    val = [d[1] for d in data]
-    wt = [d[0] for d in data]
-    n = len(val)
+with open(nome_arq, newline='') as file:
+    leitor = csv.reader(file, delimiter=',')
+    itens = []
+    for linha in leitor:
+        peso = int(linha[0])
+        valor = int(linha[1])
+        itens.append([peso, valor])
 
-    start_time = time.time()
-    result = knapSack(W, wt, val, n)
-    end_time = time.time()
-    totalRes += end_time - start_time
-    print("Resultado:", result)
-    print("Tempo gasto:", end_time - start_time, "segundos")
+W = 100
+melhor_valor = 0
+melhor_solucao = []
 
-print(totalRes / 5)
+start_time = time.time()
+# gera todas as combinações possíveis de escolha de itens
+for possibilidade in itertools.product([0, 1], repeat=len(itens)):
+    peso_atual = sum([itens[i][0]
+                      for i in range(len(itens))
+                      if possibilidade[i] == 1])
+    valor_atual = sum([itens[i][1]
+                       for i in range(len(itens))
+                       if possibilidade[i] == 1])
+
+    # verifica se a combinação atual é válida (não ultrapassa o peso máximo)
+    if peso_atual <= W:
+        # verifica se a combinação atual tem um valor maior que a melhor solução encontrada até agora
+        if valor_atual > melhor_valor:
+            melhor_valor = valor_atual
+            melhor_solucao = [i for i in range(len(itens))
+                              if possibilidade[i] == 1]
+end_time = time.time()
+
+print("Melhor Solução:")
+print("Itens: ", [itens[i] for i in melhor_solucao])
+print("Peso Total: ", sum([itens[i][0] for i in melhor_solucao]))
+print("Valor Total: ", melhor_valor)
+
+print("Tempo gasto:", end_time - start_time, "segundos")

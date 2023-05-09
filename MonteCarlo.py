@@ -2,54 +2,45 @@ import random
 import time
 import csv
 
-file_name = "input500.txt"
+nome_arq = "input20.txt"
 
+with open(nome_arq, newline='') as file:
+    leitor = csv.reader(file, delimiter=',')
+    itens = []
+    for linha in leitor:
+        peso = int(linha[0])
+        valor = int(linha[1])
+        itens.append([peso, valor])
 
-with open(file_name, newline='') as file:
-  reader = csv.reader(file, delimiter=',')
-  items = []
-  for row in reader:
-    weight = int(row[0])
-    value = int(row[1])
-    items.append([weight, value])
+W = 100
 
-# pretty_print_items(items)
-# print("\n\n")
-max_weight = 100
-totalResTime = 0
-totalResValue = 0
-for i in range(50):
+N = 100000  # número de soluções aleatórias geradas
 
-  N = 100000  # número de soluções aleatórias geradas
+melhor_valor = 0
+melhor_solucao = []
 
-  best_value = 0
-  best_solution = []
+start_time = time.time()
+for i in range(N):
+    peso_atual = 0
+    valor_atual = 0
+    solucao_atual = []
+    for j in range(len(itens)):
+        if random.random(
+        ) > 0.5:  # escolha aleatória do item para incluir ou não na mochila
+            peso_item = itens[j][0]
+            valor_item = itens[j][1]
+            if peso_atual + peso_item <= W:
+                peso_atual += peso_item
+                valor_atual += valor_item
+                solucao_atual.append(j)
+    if valor_atual > melhor_valor:
+        melhor_valor = valor_atual
+        melhor_solucao = solucao_atual
+end_time = time.time()
 
+print("Melhor Solução:")
+print("Itens: ", [itens[i] for i in melhor_solucao])
+print("Peso Total: ", sum([itens[i][0] for i in melhor_solucao]))
+print("Valor Total: ", melhor_valor)
 
-  start_time = time.time()
-  for i in range(N):
-    current_weight = 0
-    current_value = 0
-    current_solution = []
-    for j in range(len(items)):
-      if random.random(
-      ) > 0.5:  # escolha aleatória do item para incluir ou não na mochila
-        item_weight = items[j][0]
-        item_value = items[j][1]
-        if current_weight + item_weight <= max_weight:
-          current_weight += item_weight
-          current_value += item_value
-          current_solution.append(j)
-    if current_value > best_value:
-      best_value = current_value
-      best_solution = current_solution
-  end_time = time.time()
-  print("Best solution found:")
-  print("Items: ", [items[i] for i in best_solution])
-  print("Total weight: ", sum([items[i][0] for i in best_solution]))
-  print("Total value: ", best_value)
-  totalResValue += best_value
-  print("Tempo gasto:", end_time - start_time, "segundos")
-  totalResTime += end_time-start_time
-print(totalResTime/50)
-print(totalResValue/50)
+print("Tempo gasto:", end_time - start_time, "segundos")
