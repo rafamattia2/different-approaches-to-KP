@@ -1,11 +1,12 @@
 import random
 import csv
+import time
 
-file_name = "output20.txt"
-max_weight = 100
-population_size = 100
+file_name = "input5.txt"
+max_weight = 10
+population_size = 1000
 mutation_probability = 0.2
-generations = 140
+generations = 100
 
 def generate_population(size):
     population = []
@@ -31,17 +32,36 @@ def calculate_fitness(chromosome):
         return total_value
 
 # def select_chromosomes(population):
+#     fitness_values = [calculate_fitness(chromosome) for chromosome in population]
+#
+#     if len(fitness_values) != len(population):
+#         fitness_values = [float(i)/len(population) for i in range(len(population))]
+#
+#     max_weights = max(fitness_values)
+#     if max_weights > 0:
+#         fitness_values = [w/max_weight for w in range(len(population))]
+#     else:
+#         fitness_values = [1/len(fitness_values) for _ in fitness_values]
+#     parent1 = random.choices(population, weights=fitness_values, k=1)[0]
+#     parent2 = random.choices(population, weights=fitness_values, k=1)[0]
+
+    return parent1, parent2
+# def select_chromosomes(population):
 #     fitness_values = []
 #     for chromosome in population:
 #         fitness_values.append(calculate_fitness(chromosome))
-#
-#     fitness_values = [float(i)/sum(fitness_values) for i in fitness_values]
-#     parent1 = random.choices(population, weights=fitness_values, k=1)[0]
-#     parent2 = random.choices(population, weights=fitness_values, k=1)[0]
+#         try:
+#             fitness_values = [float(i)/sum(fitness_values) for i in fitness_values]
+#             parent1 = random.choices(population, weights=fitness_values, k=1)[0]
+#             parent2 = random.choices(population, weights=fitness_values, k=1)[0]
+#         except ZeroDivisionError:
+#             fitness_value = [1.0/len(fitness_values) for _ in fitness_values]
+#             parent1 = random.choices(population, weights=fitness_values, k=1)[0]
+#             parent2 = random.choices(population, weights=fitness_values, k=1)[0]
 #
 #     #print("Selected two chromosomes for crossover")
 #     return parent1, parent2
-#
+
 def select_chromosomes(population):
     fitness_values = []
     for chromosome in population:
@@ -99,32 +119,41 @@ print("Mutation probability: ", mutation_probability)
 print("Generations: ", generations)
 print("Performing genetic evolution: ")
 
-# population, items = generate_population(population_size, file_name)
-population = generate_population(population_size)
+totalTime = 0
+totalValue = 0
+for i in range(50):
+    start_time = time.time()
+    # population, items = generate_population(population_size, file_name)
+    population = generate_population(population_size)
+    for _ in range(generations):
+        parent1, parent2 = select_chromosomes(population)
 
-for _ in range(generations):
-    parent1, parent2 = select_chromosomes(population)
+        child1, child2 = crossover(parent1, parent2)
 
-    child1, child2 = crossover(parent1, parent2)
+        if random.uniform(0, 1) < mutation_probability:
+            child1 = mutate(child1)
 
-    if random.uniform(0, 1) < mutation_probability:
-        child1 = mutate(child1)
+        if random.uniform(0, 1) < mutation_probability:
+            child2 = mutate(child2)
 
-    if random.uniform(0, 1) < mutation_probability:
-        child2 = mutate(child2)
+        population = [child1, child2] + population[2:]
 
-    population = [child1, child2] + population[2:]
+    best = get_best(population)
 
-best = get_best(population)
+    total_weight = 0
+    total_value = 0
+    for i in range(len(best)):
+        if best[i] == 1:
+            total_weight += items[i][0]
+            total_value += items[i][1]
 
-total_weight = 0
-total_value = 0
-for i in range(len(best)):
-    if best[i] == 1:
-        total_weight += items[i][0]
-        total_value += items[i][1]
-
-print(best)
-print("\nThe best solution: ")
-print("Weight: ", total_weight)
-print("Value: ", total_value)
+    end_time = time.time()
+    print(best)
+    print("\nThe best solution: ")
+    print("Weight: ", total_weight)
+    print("Value: ", total_value)
+    totalValue += total_value
+    print("Tempo gasto:", end_time - start_time, "segundos")
+    totalTime += end_time - start_time
+print(totalTime / 50)
+print(totalValue / 50)
